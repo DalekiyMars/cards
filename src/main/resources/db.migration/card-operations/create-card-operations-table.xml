@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-card-operations-table" author="Eugene">
+        <createTable tableName="card_operations">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="from_card_id" type="BIGINT"/>
+            <column name="to_card_id" type="BIGINT"/>
+            <column name="type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="NUMERIC(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="card_operations"
+                baseColumnNames="from_card_id"
+                referencedTableName="cards"
+                referencedColumnNames="id"
+                constraintName="fk_operation_from_card"/>
+
+        <addForeignKeyConstraint
+                baseTableName="card_operations"
+                baseColumnNames="to_card_id"
+                referencedTableName="cards"
+                referencedColumnNames="id"
+                constraintName="fk_operation_to_card"/>
+    </changeSet>
+</databaseChangeLog>
