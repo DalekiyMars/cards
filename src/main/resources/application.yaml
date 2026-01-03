@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate # Production-ready подход: схема управляется Liquibase
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -21,3 +21,12 @@ application:
     jwt:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970 # 256-bit hex ключ
       expiration: 86400000 # 1 день в миллисекундах
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
