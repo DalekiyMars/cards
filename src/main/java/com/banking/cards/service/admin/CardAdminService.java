@@ -2,7 +2,7 @@ package com.banking.cards.service.admin;
 
 import com.banking.cards.common.CardStatus;
 import com.banking.cards.dto.CardCreateRequest;
-import com.banking.cards.dto.CardResponseDto;
+import com.banking.cards.dto.CardDto;
 import com.banking.cards.entity.Card;
 import com.banking.cards.entity.User;
 import com.banking.cards.mapper.CardMapper;
@@ -50,7 +50,7 @@ public class CardAdminService {
         cardRepository.deleteById(cardId);
     }
 
-    public Page<CardResponseDto> getAllCards(Pageable pageable) {
+    public Page<CardDto> getAllCards(Pageable pageable) {
         return cardRepository.findAll(pageable)
                 .map(CardMapper::toDto);
     }

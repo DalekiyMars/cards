@@ -4,25 +4,27 @@ import com.banking.cards.common.CardStatus;
 import com.banking.cards.entity.Card;
 import com.banking.cards.entity.User;
 import com.banking.cards.repository.CardRepository;
+import com.banking.cards.repository.UserRepository;
 import com.banking.cards.service.CardOperationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class CardService {
+public class UserCardOperationService {
 
     private final CardRepository cardRepository;
+    private final UserRepository userRepository;
     private final CardOperationService cardOperationService;
 
     @Transactional
-    public void transfer(Long fromId, Long toId, BigDecimal amount, User user) {
+    public void transfer(Long fromId, Long toId, BigDecimal amount, Long userId) {
+        User user = getUser(userId);
+
         Card from = getUserCard(fromId, user);
         Card to = getUserCard(toId, user);
 
@@ -40,7 +42,8 @@ public class CardService {
     }
 
     @Transactional
-    public void deposit(Long cardId, BigDecimal amount, User user) {
+    public void deposit(Long cardId, BigDecimal amount, Long userId) {
+        User user = getUser(userId);
 
         Card card = getUserCard(cardId, user);
         validateCardIsActive(card);
@@ -50,7 +53,9 @@ public class CardService {
     }
 
     @Transactional
-    public void withdraw(Long cardId, BigDecimal amount, User user) {
+    public void withdraw(Long cardId, BigDecimal amount, Long userId) {
+        User user = getUser(userId);
+
         Card card = getUserCard(cardId, user);
         validateCardIsActive(card);
 
@@ -62,16 +67,16 @@ public class CardService {
         cardOperationService.logWithdraw(card, amount);
     }
 
-    // ===== PRIVATE HELPERS =====
+    // ===== HELPERS =====
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
 
     private Card getUserCard(Long cardId, User user) {
-        Card card = cardRepository.findById(cardId)
+        return cardRepository.findByIdAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
-
-        if (!card.getOwner().getId().equals(user.getId())) {
-            throw new AccessDeniedException("Card does not belong to user");
-        }
-        return card;
     }
 
     private void validateCardIsActive(Card card) {

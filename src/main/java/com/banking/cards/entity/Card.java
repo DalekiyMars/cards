@@ -1,11 +1,11 @@
 package com.banking.cards.entity;
 
 import com.banking.cards.common.CardStatus;
-import com.banking.cards.util.CardNumberConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "cards")
@@ -19,7 +19,6 @@ public class Card {
     private Long id;
 
     @Column(name = "card_number", nullable = false, unique = true)
-    @Convert(converter = CardNumberConverter.class)
     private String cardNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,7 +39,9 @@ public class Card {
     private Long version;
 
     public String getMaskedNumber() {
-        if (cardNumber == null || cardNumber.length() < 4) return "****";
+        if (Objects.isNull(cardNumber) || cardNumber.length() < 4) {
+            return "****";
+        }
         return "**** **** **** " + cardNumber.substring(cardNumber.length() - 4);
     }
 }

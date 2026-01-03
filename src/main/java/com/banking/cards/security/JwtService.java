@@ -1,9 +1,8 @@
 package com.banking.cards.security;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
+import org.springframework.security.core.GrantedAuthority;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -14,7 +13,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class JwtService {
@@ -22,77 +20,59 @@ public class JwtService {
     private final SecretKey secretKey;
     private final long expirationMs;
 
-    public JwtService(@Value("${application.security.jwt.secret-key}") String secret,
-                      @Value("${application.security.jwt.expiration}") long expirationMs) {
-        if (Objects.isNull(secret) || secret.length() < 32) {
-            throw new IllegalArgumentException("JWT secret must be provided and at least 32 characters long");
-        }
+    public JwtService(
+            @Value("${application.security.jwt.secret-key}") String secret,
+            @Value("${application.security.jwt.expiration}") long expirationMs
+    ) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;
     }
 
     /**
-     * Генерирует JWT. В payload кладём:
-     *  - sub = userId (String)
-     *  - username = user.getUsername()
-     *  - roles = List из roles (например ["ROLE_USER"])
+     * JWT payload:
+     *  - sub    -> userId
+     *  - roles  -> ["ROLE_USER"]
      */
-    public String generateToken(Long userId, String username, List<String> roles) {
+    public String generateToken(SecurityUser user) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + expirationMs);
 
-        JwtBuilder builder = Jwts.builder()
-                .setSubject(userId.toString())                // sub -> userId
+        List<String> roles = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return Jwts.builder()
+                .setSubject(user.getUserId().toString())
                 .setIssuedAt(now)
                 .setExpiration(exp)
-                .claim("username", username)                  // дополнительный claim
-                .claim("roles", roles)                        // роли
-                .signWith(secretKey, SignatureAlgorithm.HS256);
-
-        return builder.compact();
+                .claim("roles", roles)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    /** Разбор claims и валидация подписи/срока */
-    public Jws<Claims> parseClaimsJws(String token) throws JwtException {
+    public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
-                .parseClaimsJws(token);
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    /** Проверка валидности токена (сигнатура + срок) */
     public boolean validateToken(String token) {
         try {
-            parseClaimsJws(token);
+            getClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
     }
 
-    /** Получить все claims */
-    public Claims getClaims(String token) {
-        return parseClaimsJws(token).getBody();
-    }
-
-    /** Вытянуть userId */
     public Long extractUserId(String token) {
-        String sub = getClaims(token).getSubject();
-        return sub != null ? Long.valueOf(sub) : null;
+        return Long.valueOf(getClaims(token).getSubject());
     }
 
-    /** Вытянуть username */
-    public String extractUsername(String token) {
-        return getClaims(token).get("username", String.class);
-    }
-
-    /** Вытянуть роли в виде List<String> */
     @SuppressWarnings("unchecked")
     public List<String> extractRoles(String token) {
-        Object raw = getClaims(token).get("roles");
-        if (raw instanceof List) {
-            return (List<String>) raw;
-        }
-        return List.of();
+        return getClaims(token).get("roles", List.class);
     }
 }
