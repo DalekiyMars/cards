@@ -36,6 +36,9 @@ public class Card {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
 
+    @Version
+    private Long version;
+
     public String getMaskedNumber() {
         if (cardNumber == null || cardNumber.length() < 4) return "****";
         return "**** **** **** " + cardNumber.substring(cardNumber.length() - 4);

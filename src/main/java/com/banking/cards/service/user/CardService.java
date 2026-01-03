@@ -23,7 +23,6 @@ public class CardService {
 
     @Transactional
     public void transfer(Long fromId, Long toId, BigDecimal amount, User user) {
-
         Card from = getUserCard(fromId, user);
         Card to = getUserCard(toId, user);
 
@@ -76,11 +75,8 @@ public class CardService {
     }
 
     private void validateCardIsActive(Card card) {
-        if (Objects.equals(card.getStatus(),CardStatus.OUTDATE)) {
-            throw new IllegalStateException("Card is expired");
-        }
-        if (Objects.equals(card.getStatus(), CardStatus.BLOCKED)) {
-            throw new IllegalStateException("Card is blocked");
+        if (card.getStatus() != CardStatus.ACTIVE) {
+            throw new IllegalStateException("Card is not active");
         }
     }
 }
