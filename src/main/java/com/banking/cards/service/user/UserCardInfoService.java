@@ -40,7 +40,7 @@ public class UserCardInfoService {
 
         Page<CardDto> cards = cardRepository.findAllByOwner(user, pageable).map(CardMapper::toDto);
 
-        return PageMapper.toPageResponseCard(cards, page, size);
+        return PageMapper.toPageResponse(cards);
     }
 
     @Transactional(readOnly = true)
@@ -71,14 +71,14 @@ public class UserCardInfoService {
                 Sort.by("createdAt").descending()
         );
 
-        Page<CardOperation> operations =
+        Page<CardOperationDto> operations =
                 operationRepository.findAllByFromCard_IdOrToCard_Id(
                         card.getId(),
                         card.getId(),
                         pageable
-                );
+                ).map(CardMapper::toOperationDto);
 
-        return PageMapper.toPageResponseCardOperation(operations.map(CardMapper::toOperationDto), page, size);
+        return PageMapper.toPageResponse(operations);
     }
 
     private User getUser(Long userId) {

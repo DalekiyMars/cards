@@ -5,11 +5,13 @@ import com.banking.cards.entity.Card;
 import com.banking.cards.entity.CardOperation;
 import com.banking.cards.repository.CardOperationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CardOperationService {
@@ -18,14 +20,17 @@ public class CardOperationService {
 
     public void logDeposit(Card card, BigDecimal amount) {
         save(null, card, CardOperationType.DEPOSIT, amount);
+        log.info("Deposit {} to card {}", amount, card.getCardNumber());
     }
 
     public void logWithdraw(Card card, BigDecimal amount) {
         save(card, null, CardOperationType.WITHDRAW, amount);
+        log.info("Withdraw {} from card {}", amount, card.getCardNumber());
     }
 
     public void logTransfer(Card from, Card to, BigDecimal amount) {
         save(from, to, CardOperationType.TRANSFER, amount);
+        log.info("Transfer card from: {} to: {}", from.getCardNumber(), to.getCardNumber());
     }
 
     private void save(

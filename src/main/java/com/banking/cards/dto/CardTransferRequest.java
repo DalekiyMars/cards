@@ -1,15 +1,18 @@
 package com.banking.cards.dto;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
 public record CardTransferRequest(
         @NotNull(message = "Source card id is required")
+        @Min(1)
         Long fromCardId,
 
         @NotNull(message = "Target card id is required")
+        @Min(1)
         Long toCardId,
 
         @NotNull(message = "Amount is required")
