@@ -1,6 +1,6 @@
-package com.banking.cards.controller;
+package com.banking.cards.controller.admin;
 
-import com.banking.cards.dto.ChangeUserRoleRequest;
+import com.banking.cards.dto.request.ChangeUserRoleRequest;
 import com.banking.cards.service.admin.AdminUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -46,7 +48,7 @@ public class AdminUserController {
     })
     @PatchMapping("/{id}/role")
     public void changeUserRole(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody ChangeUserRoleRequest request
     ) {
         adminUserService.changeUserRole(id, request.role());

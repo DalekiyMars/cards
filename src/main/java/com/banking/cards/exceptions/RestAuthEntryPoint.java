@@ -1,6 +1,6 @@
 package com.banking.cards.exceptions;
 
-import com.banking.cards.dto.ApiErrorResponse;
+import com.banking.cards.dto.response.ApiErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,11 +1,10 @@
-package com.banking.cards.controller;
+package com.banking.cards.controller.admin;
 
 import com.banking.cards.common.CardStatus;
-import com.banking.cards.dto.CardCreateRequest;
-import com.banking.cards.dto.CardDto;
-import com.banking.cards.dto.PageResponse;
-import com.banking.cards.mapper.PageMapper;
-import com.banking.cards.service.admin.CardAdminService;
+import com.banking.cards.dto.request.AdminCreateCardRequest;
+import com.banking.cards.dto.response.CardDto;
+import com.banking.cards.dto.response.PageResponse;
+import com.banking.cards.service.admin.AdminCardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/admin/cards")
 @RequiredArgsConstructor
@@ -38,9 +39,9 @@ import org.springframework.web.bind.annotation.RestController;
 )
 @SecurityRequirement(name = "bearerAuth")
 @PreAuthorize("hasRole('ADMIN')")
-public class CardAdminController {
+public class AdminCardController {
 
-    private final CardAdminService cardAdminService;
+    private final AdminCardService cardAdminService;
 
     // ===== CREATE CARD =====
 
@@ -62,7 +63,7 @@ public class CardAdminController {
     })
     @PostMapping
     public CardDto createCard(
-            @Valid @RequestBody CardCreateRequest request
+            @Valid @RequestBody AdminCreateCardRequest request
     ) {
         return cardAdminService.createCard(request);
     }
@@ -79,7 +80,7 @@ public class CardAdminController {
     })
     @PatchMapping("/{id}/status")
     public void changeCardStatus(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam CardStatus status
     ) {
         cardAdminService.changeStatus(id, status);
@@ -97,7 +98,7 @@ public class CardAdminController {
     })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCard(@PathVariable Long id) {
+    public void deleteCard(@PathVariable UUID id) {
         cardAdminService.deleteCard(id);
     }
 
@@ -110,8 +111,9 @@ public class CardAdminController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Список карт")
     })
-    @GetMapping
-    public PageResponse<CardDto> getAllCards(
+    @GetMapping("{uuid}")
+    public PageResponse<CardDto> getAllUserCards(
+            @PathVariable UUID uuid,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
@@ -121,6 +123,6 @@ public class CardAdminController {
                 Sort.by("id").ascending()
         );
 
-        return cardAdminService.getAllCards(pageable);
+        return cardAdminService.getUserCards(uuid, pageable);
     }
 }

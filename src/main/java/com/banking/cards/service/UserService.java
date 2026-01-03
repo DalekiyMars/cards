@@ -1,7 +1,7 @@
 package com.banking.cards.service;
 
 import com.banking.cards.common.Role;
-import com.banking.cards.dto.LoginRequest;
+import com.banking.cards.dto.request.LoginRequest;
 import com.banking.cards.entity.User;
 import com.banking.cards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -7,4 +7,6 @@
     <include file="start-config/accumulate-changelog.xml" relativeToChangelogFile="true"/>
     <include file="card-operations/accumulate-changelog.xml" relativeToChangelogFile="true"/>
     <include file="add-version-to-cards/accumulate-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="add-unique-key/accumulate-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="drop-card-owner-column/accumulate-changelog.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

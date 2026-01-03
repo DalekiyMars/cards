@@ -1,8 +1,8 @@
-package com.banking.cards.controller;
+package com.banking.cards.controller.user;
 
-import com.banking.cards.dto.CardDto;
-import com.banking.cards.dto.CardOperationDto;
-import com.banking.cards.dto.PageResponse;
+import com.banking.cards.dto.response.CardDto;
+import com.banking.cards.dto.response.CardOperationDto;
+import com.banking.cards.dto.response.PageResponse;
 import com.banking.cards.service.user.UserCardInfoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -26,7 +28,7 @@ public class CardInfoController {
     // ===== GET ALL CARDS =====
     @GetMapping
     public PageResponse<CardDto> getMyCards(
-            @AuthenticationPrincipal Long userId,
+            @AuthenticationPrincipal UUID userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
@@ -36,8 +38,8 @@ public class CardInfoController {
     // ===== GET ONE CARD =====
     @GetMapping("/{id}")
     public CardDto getMyCard(
-            @PathVariable Long id,
-            @AuthenticationPrincipal Long userId
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UUID userId
     ) {
         return cardService.getUserCard(id, userId);
     }
@@ -45,8 +47,8 @@ public class CardInfoController {
     // ===== CARD OPERATIONS =====
     @GetMapping("/{id}/operations")
     public PageResponse<CardOperationDto> getCardOperations(
-            @PathVariable Long id,
-            @AuthenticationPrincipal Long userId,
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UUID userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {

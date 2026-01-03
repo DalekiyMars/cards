@@ -13,6 +13,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class JwtService {
@@ -42,7 +43,7 @@ public class JwtService {
                 .toList();
 
         return Jwts.builder()
-                .setSubject(user.getUserId().toString())
+                .setSubject(user.getUniqueKey().toString())
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .claim("roles", roles)
@@ -67,8 +68,8 @@ public class JwtService {
         }
     }
 
-    public Long extractUserId(String token) {
-        return Long.valueOf(getClaims(token).getSubject());
+    public UUID extractUserId(String token) {
+        return UUID.fromString(getClaims(token).getSubject());
     }
 
     @SuppressWarnings("unchecked")

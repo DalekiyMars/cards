@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class UserCardOperationService {
     private final CardOperationService cardOperationService;
 
     @Transactional
-    public void transfer(Long fromId, Long toId, BigDecimal amount, Long userId) {
+    public void transfer(UUID fromId, UUID toId, BigDecimal amount, Long userId) {
         User user = getUser(userId);
 
         Card from = getUserCard(fromId, user);
@@ -42,7 +43,7 @@ public class UserCardOperationService {
     }
 
     @Transactional
-    public void deposit(Long cardId, BigDecimal amount, Long userId) {
+    public void deposit(UUID cardId, BigDecimal amount, Long userId) {
         User user = getUser(userId);
 
         Card card = getUserCard(cardId, user);
@@ -53,7 +54,7 @@ public class UserCardOperationService {
     }
 
     @Transactional
-    public void withdraw(Long cardId, BigDecimal amount, Long userId) {
+    public void withdraw(UUID cardId, BigDecimal amount, Long userId) {
         User user = getUser(userId);
 
         Card card = getUserCard(cardId, user);
@@ -74,8 +75,8 @@ public class UserCardOperationService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    private Card getUserCard(Long cardId, User user) {
-        return cardRepository.findByIdAndOwner(cardId, user)
+    private Card getUserCard(UUID cardId, User user) {
+        return cardRepository.findByUniqueKeyAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
     }
 

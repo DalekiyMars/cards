@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AdminUserService {
@@ -15,8 +17,8 @@ public class AdminUserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void changeUserRole(Long userId, Role newRole) {
-        User user = userRepository.findById(userId)
+    public void changeUserRole(UUID userId, Role newRole) {
+        User user = userRepository.findByUniqueKey(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (user.getRole() == newRole) {

@@ -1,10 +1,9 @@
 package com.banking.cards.service.user;
 
-import com.banking.cards.dto.CardDto;
-import com.banking.cards.dto.CardOperationDto;
-import com.banking.cards.dto.PageResponse;
+import com.banking.cards.dto.response.CardDto;
+import com.banking.cards.dto.response.CardOperationDto;
+import com.banking.cards.dto.response.PageResponse;
 import com.banking.cards.entity.Card;
-import com.banking.cards.entity.CardOperation;
 import com.banking.cards.entity.User;
 import com.banking.cards.mapper.CardMapper;
 import com.banking.cards.mapper.PageMapper;
@@ -20,6 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserCardInfoService {
@@ -29,7 +30,7 @@ public class UserCardInfoService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public PageResponse<CardDto> getUserCards(Long userId, int page, int size) {
+    public PageResponse<CardDto> getUserCards(UUID userId, int page, int size) {
         User user = getUser(userId);
 
         Pageable pageable = PageRequest.of(
@@ -44,10 +45,10 @@ public class UserCardInfoService {
     }
 
     @Transactional(readOnly = true)
-    public CardDto getUserCard(Long cardId, Long userId) {
+    public CardDto getUserCard(UUID cardId, UUID userId) {
         User user = getUser(userId);
 
-        Card card = cardRepository.findByIdAndOwner(cardId, user)
+        Card card = cardRepository.findByUniqueKeyAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
 
         return CardMapper.toDto(card);
@@ -55,14 +56,14 @@ public class UserCardInfoService {
 
     @Transactional(readOnly = true)
     public PageResponse<CardOperationDto> getCardOperations(
-            Long cardId,
-            Long userId,
+            UUID cardId,
+            UUID userId,
             int page,
             int size
     ) {
         User user = getUser(userId);
 
-        Card card = cardRepository.findByIdAndOwner(cardId, user)
+        Card card = cardRepository.findByUniqueKeyAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
 
         Pageable pageable = PageRequest.of(
@@ -81,8 +82,8 @@ public class UserCardInfoService {
         return PageMapper.toPageResponse(operations);
     }
 
-    private User getUser(Long userId) {
-        return userRepository.findById(userId)
+    private User getUser(UUID userId) {
+        return userRepository.findByUniqueKey(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 }

@@ -1,4 +1,4 @@
-package com.banking.cards.dto;
+package com.banking.cards.dto.response;
 
 import java.time.Instant;
 

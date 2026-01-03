@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +33,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(
+            name = "unique_key",
+            nullable = false,
+            unique = true,
+            updatable = false)
+    private UUID uniqueKey;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -43,4 +53,11 @@ public class User {
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Card> cards;
+
+    @PrePersist
+    void prePersist() {
+        if (Objects.isNull(uniqueKey)) {
+            uniqueKey = UUID.randomUUID();
+        }
+    }
 }

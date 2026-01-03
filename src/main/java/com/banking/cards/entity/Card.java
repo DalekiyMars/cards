@@ -6,23 +6,30 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "cards")
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Card {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "unique_key",
+            nullable = false,
+            unique = true,
+            updatable = false)
+    private UUID uniqueKey;
 
     @Column(name = "card_number", nullable = false, unique = true)
     private String cardNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) // <- связка по user_id
+    @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
     @Column(name = "validity_period", nullable = false)
@@ -43,5 +50,12 @@ public class Card {
             return "****";
         }
         return "**** **** **** " + cardNumber.substring(cardNumber.length() - 4);
+    }
+
+    @PrePersist
+    void prePersist() {
+        if (Objects.isNull(uniqueKey)) {
+            uniqueKey = UUID.randomUUID();
+        }
     }
 }

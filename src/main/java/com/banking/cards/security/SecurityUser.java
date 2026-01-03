@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class SecurityUser implements UserDetails {
 
@@ -16,8 +17,8 @@ public class SecurityUser implements UserDetails {
         this.user = user;
     }
 
-    public Long getUserId() {
-        return user.getId();
+    public UUID getUniqueKey() {
+        return user.getUniqueKey();
     }
 
     @Override

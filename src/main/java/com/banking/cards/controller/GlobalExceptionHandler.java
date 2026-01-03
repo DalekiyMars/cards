@@ -1,12 +1,14 @@
 package com.banking.cards.controller;
 
-import com.banking.cards.dto.ApiErrorResponse;
+import com.banking.cards.dto.response.ApiErrorResponse;
+import com.banking.cards.exceptions.BadBalanceException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -94,6 +96,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BadBalanceException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadBalance(
+            BadBalanceException ex,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.FORBIDDEN,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalState(
             IllegalStateException ex,
@@ -126,6 +140,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ex.getMessage(),
                 request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleEnumParseError(
+    ) {
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Arguments exception",
+                "Json error"
         );
     }
 

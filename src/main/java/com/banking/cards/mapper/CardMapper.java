@@ -1,7 +1,7 @@
 package com.banking.cards.mapper;
 
-import com.banking.cards.dto.CardDto;
-import com.banking.cards.dto.CardOperationDto;
+import com.banking.cards.dto.response.CardDto;
+import com.banking.cards.dto.response.CardOperationDto;
 import com.banking.cards.entity.Card;
 import com.banking.cards.entity.CardOperation;
 
@@ -9,7 +9,7 @@ public final class CardMapper {
 
     public static CardDto toDto(Card card) {
         return new CardDto(
-                card.getId(),
+                card.getUniqueKey(),
                 card.getMaskedNumber(),
                 card.getValidityPeriod(),
                 card.getStatus(),

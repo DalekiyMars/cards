@@ -1,7 +1,7 @@
-package com.banking.cards.controller;
+package com.banking.cards.controller.user;
 
-import com.banking.cards.dto.CardAmountRequest;
-import com.banking.cards.dto.CardTransferRequest;
+import com.banking.cards.dto.request.CardAmountRequest;
+import com.banking.cards.dto.request.CardTransferRequest;
 import com.banking.cards.service.user.UserCardOperationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -24,7 +26,7 @@ public class CardOperationsController {
 
     @PostMapping("/{id}/deposit")
     public void deposit(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody CardAmountRequest request,
             @AuthenticationPrincipal Long userId
     ) {
@@ -33,7 +35,7 @@ public class CardOperationsController {
 
     @PostMapping("/{id}/withdraw")
     public void withdraw(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody CardAmountRequest request,
             @AuthenticationPrincipal Long userId
     ) {
