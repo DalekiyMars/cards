@@ -25,8 +25,10 @@ public abstract class MaskedValue<T> implements Serializable {
     protected abstract String getMaskedValue();
 
     @Override
-    @JsonValue
     public final String toString() {
         return maskingConfig.isEnable() ? getMaskedValue() : value.toString();
     }
+
+    @JsonValue
+    private String getValue(){return this.value.toString();}
 }
