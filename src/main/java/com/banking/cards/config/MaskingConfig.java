@@ -18,5 +18,4 @@ public class MaskingConfig {
 
     @Value("${application.masking.visibleCardTailLength:4}")
     private int visibleCardTailLength;
-
 }
