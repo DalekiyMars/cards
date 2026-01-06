@@ -26,7 +26,7 @@ public class OpenApiConfig {
                                 -> аудит операций
                                 -> JWT-аутентификация
                                 """)
-                        .version("1.0.0")
+                        .version("1.6")
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()

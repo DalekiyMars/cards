@@ -1,13 +1,17 @@
 package com.banking.cards.mapper;
 
+import com.banking.cards.common.MaskedBalanceValue;
 import com.banking.cards.common.MaskedCardNumber;
 import com.banking.cards.common.MaskedValueFactory;
 import com.banking.cards.dto.response.CardDto;
 import com.banking.cards.dto.response.CardOperationDto;
 import com.banking.cards.entity.Card;
 import com.banking.cards.entity.CardOperation;
+import com.banking.cards.util.MathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
 
 @Component
 public class CardMapper {
@@ -20,7 +24,7 @@ public class CardMapper {
                 toMaskedCardNumber(card.getCardNumber()),
                 card.getValidityPeriod(),
                 card.getStatus(),
-                card.getBalance()
+                toMaskedCardBalance(MathUtil.roundBalanceTo2SympolsAfterPoint(card.getBalance()))
         );
     }
 
@@ -39,6 +43,14 @@ public class CardMapper {
     }
 
     public String fromMaskedCardNumber(MaskedCardNumber cardNumber) {
+        return cardNumber.value();
+    }
+
+    public MaskedBalanceValue toMaskedCardBalance(BigDecimal cardBalance) {
+        return maskedValueFactory.createCardNumber(cardBalance);
+    }
+
+    public BigDecimal fromMaskedCardBalance(MaskedBalanceValue cardNumber) {
         return cardNumber.value();
     }
 }

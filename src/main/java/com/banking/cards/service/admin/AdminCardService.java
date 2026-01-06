@@ -88,7 +88,7 @@ public class AdminCardService {
                 AuditAction.CARD_STATUS_CHANGED,
                 AuditEntityType.CARD,
                 card.getUniqueKey(),
-                "oldStatus=" + oldStatus + ";newStatus=" + card.getStatus()
+                "oldStatus=" + oldStatus + ";newStatus=" + card.getStatus() + ";cardNumber= "+ card.getCardNumber()
         );
     }
 
