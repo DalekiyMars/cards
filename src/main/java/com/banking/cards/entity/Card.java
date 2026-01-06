@@ -45,13 +45,6 @@ public class Card {
     @Version
     private Long version;
 
-    public String getMaskedNumber() {
-        if (Objects.isNull(cardNumber) || cardNumber.length() < 4) {
-            return "****";
-        }
-        return "**** **** **** " + cardNumber.substring(cardNumber.length() - 4);
-    }
-
     @PrePersist
     void prePersist() {
         if (Objects.isNull(uniqueKey)) {

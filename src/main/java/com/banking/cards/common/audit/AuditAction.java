@@ -11,6 +11,5 @@ public enum AuditAction {
     CARD_TRANSFER_IN,
 
     USER_REGISTERED,
-    USER_ROLE_CHANGED,
-    USER_LOGIN
+    USER_ROLE_CHANGED
 }

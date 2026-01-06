@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,6 +40,7 @@ import java.util.UUID;
 )
 @SecurityRequirement(name = "bearerAuth")
 @PreAuthorize("hasRole('ADMIN')")
+@Slf4j
 public class AdminCardController {
 
     private final AdminCardService cardAdminService;
@@ -122,7 +124,8 @@ public class AdminCardController {
                 Math.min(size, 50),
                 Sort.by("id").ascending()
         );
-
-        return cardAdminService.getUserCards(uuid, pageable);
+        var ans = cardAdminService.getUserCards(uuid, pageable);
+        log.info("{}", ans);
+        return ans;
     }
 }

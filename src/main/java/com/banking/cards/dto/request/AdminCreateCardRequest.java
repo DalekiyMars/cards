@@ -1,6 +1,7 @@
 package com.banking.cards.dto.request;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,6 +20,6 @@ public record AdminCreateCardRequest(
 
         @NotNull
         @DecimalMin(value = "0", message = "Amount must be greater than zero")
+        @Digits(integer = 19, fraction = 2)
         BigDecimal initialBalance
-
 ) {}

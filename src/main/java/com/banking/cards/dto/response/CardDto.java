@@ -1,15 +1,16 @@
 package com.banking.cards.dto.response;
 
 import com.banking.cards.common.CardStatus;
+import com.banking.cards.common.MaskedBalanceValue;
+import com.banking.cards.common.MaskedCardNumber;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record CardDto(
+public record CardDto (
         UUID id,
-        String maskedNumber,
+        MaskedCardNumber maskedNumber,
         LocalDate validityPeriod,
         CardStatus status,
-        BigDecimal balance
-) {}
+        MaskedBalanceValue balance)
+{}
