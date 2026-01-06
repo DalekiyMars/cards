@@ -1,8 +1,11 @@
 package com.banking.cards.service.admin;
 
 import com.banking.cards.common.Role;
+import com.banking.cards.common.audit.AuditAction;
+import com.banking.cards.common.audit.AuditEntityType;
 import com.banking.cards.entity.User;
 import com.banking.cards.repository.UserRepository;
+import com.banking.cards.service.AuditService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.UUID;
 public class AdminUserService {
 
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     @Transactional
     public void changeUserRole(UUID userId, Role newRole) {
@@ -24,6 +28,13 @@ public class AdminUserService {
         if (user.getRole() == newRole) {
             return;
         }
+
+        auditService.log(
+                AuditAction.USER_ROLE_CHANGED,
+                AuditEntityType.USER,
+                userId,
+                "got new role =" + newRole
+        );
 
         user.setRole(newRole);
     }

@@ -1,10 +1,13 @@
 package com.banking.cards.service.user;
 
 import com.banking.cards.common.CardStatus;
+import com.banking.cards.common.audit.AuditAction;
+import com.banking.cards.common.audit.AuditEntityType;
 import com.banking.cards.entity.Card;
 import com.banking.cards.entity.User;
 import com.banking.cards.repository.CardRepository;
 import com.banking.cards.repository.UserRepository;
+import com.banking.cards.service.AuditService;
 import com.banking.cards.service.CardOperationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ public class UserCardOperationService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final CardOperationService cardOperationService;
+    private final AuditService auditService;
 
     @Transactional
     public void transfer(UUID fromId, UUID toId, BigDecimal amount, Long userId) {
@@ -40,6 +44,22 @@ public class UserCardOperationService {
         to.setBalance(to.getBalance().add(amount));
 
         cardOperationService.logTransfer(from, to, amount);
+
+        auditService.log(
+                AuditAction.CARD_TRANSFER_OUT,
+                AuditEntityType.CARD,
+                from.getUniqueKey(),
+                "to=" + to.getUniqueKey() + ";amount=" + amount
+        );
+
+        auditService.log(
+                AuditAction.CARD_TRANSFER_IN,
+                AuditEntityType.CARD,
+                to.getUniqueKey(),
+                "from=" + from.getUniqueKey() + ";amount=" + amount
+        );
+
+
     }
 
     @Transactional
@@ -51,6 +71,13 @@ public class UserCardOperationService {
 
         card.setBalance(card.getBalance().add(amount));
         cardOperationService.logDeposit(card, amount);
+
+        auditService.log(
+                AuditAction.CARD_DEPOSIT,
+                AuditEntityType.CARD,
+                card.getUniqueKey(),
+                "amount=" + amount
+        );
     }
 
     @Transactional
@@ -64,8 +91,17 @@ public class UserCardOperationService {
             throw new IllegalStateException("Insufficient funds");
         }
 
+        var before = card.getBalance();
         card.setBalance(card.getBalance().subtract(amount));
         cardOperationService.logWithdraw(card, amount);
+
+        auditService.log(
+                AuditAction.CARD_WITHDRAW,
+                AuditEntityType.CARD,
+                card.getUniqueKey(),
+                "amount=" + amount + ";balanceBefore=" + before
+        );
+
     }
 
     // ===== HELPERS =====

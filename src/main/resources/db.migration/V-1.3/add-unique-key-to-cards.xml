@@ -5,10 +5,15 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="add-version-to-cards" author="Eugene">
+    <changeSet id="add-unique-key" author="Eugene">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <columnExists columnName="unique_key" tableName="cards"/>
+            </not>
+        </preConditions>
         <addColumn tableName="cards">
-            <column name="version" type="BIGINT" defaultValueNumeric="0">
-                <constraints nullable="false"/>
+            <column name="unique_key" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false" unique="true"/>
             </column>
         </addColumn>
     </changeSet>

@@ -1,8 +1,7 @@
-package com.banking.cards.service.user;
+package com.banking.cards.security;
 
 import com.banking.cards.entity.User;
 import com.banking.cards.repository.UserRepository;
-import com.banking.cards.security.SecurityUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
