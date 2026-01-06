@@ -6,7 +6,6 @@ spring:
     username: admin
     password: secret
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: validate
@@ -26,6 +25,9 @@ application:
     enabled: true
     maskSymbol: '*'
     visibleCardTailLength: 4
+  admin:
+    username: admin
+    password: admin123
 
 springdoc:
   api-docs:
