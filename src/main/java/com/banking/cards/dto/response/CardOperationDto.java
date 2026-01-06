@@ -1,6 +1,7 @@
 package com.banking.cards.dto.response;
 
 import com.banking.cards.common.CardOperationType;
+import com.banking.cards.common.MaskedCardNumber;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -8,7 +9,7 @@ import java.time.Instant;
 public record CardOperationDto(
         CardOperationType type,
         BigDecimal amount,
-        String fromCard,
-        String toCard,
+        MaskedCardNumber fromCard,
+        MaskedCardNumber toCard,
         Instant createdAt
 ) {}
