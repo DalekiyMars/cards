@@ -6,6 +6,11 @@
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="create-users-table" author="Eugene">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
         <createTable tableName="users">
             <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>

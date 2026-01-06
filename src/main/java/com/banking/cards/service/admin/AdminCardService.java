@@ -1,6 +1,8 @@
 package com.banking.cards.service.admin;
 
 import com.banking.cards.common.CardStatus;
+import com.banking.cards.common.audit.AuditAction;
+import com.banking.cards.common.audit.AuditEntityType;
 import com.banking.cards.dto.request.AdminCreateCardRequest;
 import com.banking.cards.dto.response.CardDto;
 import com.banking.cards.dto.response.PageResponse;
@@ -11,6 +13,7 @@ import com.banking.cards.mapper.CardMapper;
 import com.banking.cards.mapper.PageMapper;
 import com.banking.cards.repository.CardRepository;
 import com.banking.cards.repository.UserRepository;
+import com.banking.cards.service.AuditService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +30,7 @@ public class AdminCardService {
 
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     @Transactional
     public CardDto createCard(AdminCreateCardRequest request) {
@@ -43,6 +47,13 @@ public class AdminCardService {
                 .build();
 
         Card saved = cardRepository.save(card);
+        auditService.log(
+                AuditAction.CARD_CREATED,
+                AuditEntityType.CARD,
+                card.getUniqueKey(),
+                "ownerUser=" + card.getOwner().getUniqueKey()
+        );
+
         return CardMapper.toDto(saved);
     }
 
@@ -52,16 +63,31 @@ public class AdminCardService {
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
         if (!card.getBalance().equals(BigDecimal.ZERO))
             throw new BadBalanceException("Card balance should be zero");
+
         cardRepository.delete(card);
+
+        auditService.log(
+                AuditAction.CARD_DELETED,
+                AuditEntityType.CARD,
+                card.getUniqueKey(),
+                "balance=" + card.getBalance()
+        );
     }
 
     @Transactional
     public void changeStatus(UUID cardId, CardStatus status) {
         Card card = cardRepository.findByUniqueKey(cardId)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
+        var oldStatus = card.getStatus();
 
         card.setStatus(status);
-        // save НЕ нужен — managed entity
+
+        auditService.log(
+                AuditAction.CARD_STATUS_CHANGED,
+                AuditEntityType.CARD,
+                card.getUniqueKey(),
+                "oldStatus=" + oldStatus + ";newStatus=" + card.getStatus()
+        );
     }
 
     @Transactional(readOnly = true)
@@ -78,9 +104,8 @@ public class AdminCardService {
     // ===== PRIVATE =====
 
     private String generateCardNumber() {
-        // 16 цифр, BIN можно захардкодить
-        return "4000" + UUID.randomUUID().toString()
+        return UUID.randomUUID().toString()
                 .replaceAll("\\D", "")
-                .substring(0, 12);
+                .substring(0, 16);
     }
 }

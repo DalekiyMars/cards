@@ -6,6 +6,9 @@
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="drop-card-owner-column" author="Eugene">
+        <preConditions onFail="CONTINUE">
+                <columnExists columnName="card_owner" tableName="cards"/>
+        </preConditions>
         <dropColumn tableName="cards" columnName="card_owner"/>
     </changeSet>
 </databaseChangeLog>

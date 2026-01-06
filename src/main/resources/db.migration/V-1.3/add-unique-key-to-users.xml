@@ -6,6 +6,11 @@
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="add-unique-key" author="Eugene">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <columnExists columnName="unique_key" tableName="users"/>
+            </not>
+        </preConditions>
         <addColumn tableName="users">
             <column name="unique_key" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false" unique="true"/>

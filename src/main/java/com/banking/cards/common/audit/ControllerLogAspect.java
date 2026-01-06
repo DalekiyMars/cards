@@ -18,11 +18,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ControllerLogAspect {
 
-    // 1. Определяем точку среза: все классы с аннотацией @RestController
     @Pointcut("within(@org.springframework.web.bind.annotation.RestController *)")
     public void restControllerMethods() {}
 
-    // 2. Логика, выполняемая ПЕРЕД (Before) вызовом метода
     @Before("restControllerMethods()")
     public void logUserAccess(JoinPoint joinPoint) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -31,7 +29,6 @@ public class ControllerLogAspect {
             return;
         }
 
-        // Извлекаем данные
         String username = auth.getName();
         String roles = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -39,7 +36,6 @@ public class ControllerLogAspect {
         Object[] args = joinPoint.getArgs();
         String methodName = joinPoint.getSignature().getName();
 
-        // Логируем
         log.info("ACCESS AUDIT | User: {} | Roles: [{}] | Method: {} with args: [{}]",
                 username, roles, methodName, args);
     }

@@ -60,4 +60,14 @@ public class User {
             uniqueKey = UUID.randomUUID();
         }
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "role=" + role +
+                ", username='" + username + '\'' +
+                ", uniqueKey=" + uniqueKey +
+                ", id=" + id +
+                '}';
+    }
 }
