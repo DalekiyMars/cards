@@ -14,6 +14,7 @@ import com.banking.cards.mapper.PageMapper;
 import com.banking.cards.repository.CardRepository;
 import com.banking.cards.repository.UserRepository;
 import com.banking.cards.service.AuditService;
+import com.banking.cards.util.CardNumberGenerator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ public class AdminCardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private final CardMapper mapper;
 
     @Transactional
     public CardDto createCard(AdminCreateCardRequest request) {
@@ -39,7 +41,7 @@ public class AdminCardService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Card card = Card.builder()
-                .cardNumber(generateCardNumber())
+                .cardNumber(CardNumberGenerator.generateCardNumber())
                 .owner(user)
                 .validityPeriod(request.validityPeriod())
                 .status(CardStatus.ACTIVE)
@@ -54,7 +56,7 @@ public class AdminCardService {
                 "ownerUser=" + card.getOwner().getUniqueKey()
         );
 
-        return CardMapper.toDto(saved);
+        return mapper.toDto(saved);
     }
 
     @Transactional
@@ -86,7 +88,7 @@ public class AdminCardService {
                 AuditAction.CARD_STATUS_CHANGED,
                 AuditEntityType.CARD,
                 card.getUniqueKey(),
-                "oldStatus=" + oldStatus + ";newStatus=" + card.getStatus()
+                "oldStatus=" + oldStatus + ";newStatus=" + card.getStatus() + ";cardNumber= "+ card.getCardNumber()
         );
     }
 
@@ -98,14 +100,6 @@ public class AdminCardService {
 
         Page<Card> cards = cardRepository.findAllByOwner(user, pageable);
 
-        return PageMapper.toPageResponse(cards.map(CardMapper::toDto));
-    }
-
-    // ===== PRIVATE =====
-
-    private String generateCardNumber() {
-        return UUID.randomUUID().toString()
-                .replaceAll("\\D", "")
-                .substring(0, 16);
+        return PageMapper.toPageResponse(cards.map(mapper::toDto));
     }
 }

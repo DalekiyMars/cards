@@ -28,6 +28,7 @@ public class UserCardInfoService {
     private final CardRepository cardRepository;
     private final CardOperationRepository operationRepository;
     private final UserRepository userRepository;
+    private final CardMapper mapper;
 
     @Transactional(readOnly = true)
     public PageResponse<CardDto> getUserCards(UUID userId, int page, int size) {
@@ -39,7 +40,7 @@ public class UserCardInfoService {
                 Sort.by("id").ascending()
         );
 
-        Page<CardDto> cards = cardRepository.findAllByOwner(user, pageable).map(CardMapper::toDto);
+        Page<CardDto> cards = cardRepository.findAllByOwner(user, pageable).map(mapper::toDto);
 
         return PageMapper.toPageResponse(cards);
     }
@@ -51,7 +52,7 @@ public class UserCardInfoService {
         Card card = cardRepository.findByUniqueKeyAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
 
-        return CardMapper.toDto(card);
+        return mapper.toDto(card);
     }
 
     @Transactional(readOnly = true)
@@ -77,7 +78,7 @@ public class UserCardInfoService {
                         card.getId(),
                         card.getId(),
                         pageable
-                ).map(CardMapper::toOperationDto);
+                ).map(mapper::toOperationDto);
 
         return PageMapper.toPageResponse(operations);
     }
