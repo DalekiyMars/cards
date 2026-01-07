@@ -33,7 +33,7 @@ public class AuditLog {
     private Long id;
 
     @Column(name = "actor_user_id", nullable = false)
-    private UUID actorUserId;
+    private String actorUserId;
 
     @Column(name = "actor_role", nullable = false)
     private String actorRole;

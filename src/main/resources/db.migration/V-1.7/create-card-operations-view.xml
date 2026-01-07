@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-card-operations-view" author="Eugene">
+        <createView viewName="card_operations_view" replaceIfExists="true">
+            SELECT
+                co.type,
+                co.amount,
+                co.created_at,
+                c_from.unique_key AS from_card,
+                c_to.unique_key   AS to_card
+            FROM card_operations co
+                     LEFT JOIN cards c_from ON co.from_card_id = c_from.id
+                     LEFT JOIN cards c_to   ON co.to_card_id   = c_to.id
+        </createView>
+    </changeSet>
+
+
+
+
+</databaseChangeLog>

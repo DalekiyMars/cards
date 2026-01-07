@@ -3,6 +3,7 @@ package com.banking.cards.mapper;
 import com.banking.cards.common.MaskedBalanceValue;
 import com.banking.cards.common.MaskedCardNumber;
 import com.banking.cards.common.MaskedValueFactory;
+import com.banking.cards.dto.response.AdminCardDto;
 import com.banking.cards.dto.response.CardDto;
 import com.banking.cards.dto.response.CardOperationDto;
 import com.banking.cards.entity.Card;
@@ -25,6 +26,16 @@ public class CardMapper {
                 card.getValidityPeriod(),
                 card.getStatus(),
                 toMaskedCardBalance(MathUtil.roundBalanceTo2SympolsAfterPoint(card.getBalance()))
+        );
+    }
+
+    public AdminCardDto toAdminDto(Card card) {
+        return new AdminCardDto(
+                card.getUniqueKey(),
+                toMaskedCardNumber(card.getCardNumber()).toString(),
+                card.getValidityPeriod(),
+                card.getStatus(),
+                toMaskedCardBalance(card.getBalance()).toString()
         );
     }
 

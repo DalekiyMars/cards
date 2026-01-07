@@ -4,7 +4,7 @@ import com.banking.cards.common.CardStatus;
 import com.banking.cards.common.audit.AuditAction;
 import com.banking.cards.common.audit.AuditEntityType;
 import com.banking.cards.dto.request.AdminCreateCardRequest;
-import com.banking.cards.dto.response.CardDto;
+import com.banking.cards.dto.response.AdminCardDto;
 import com.banking.cards.dto.response.PageResponse;
 import com.banking.cards.entity.Card;
 import com.banking.cards.entity.User;
@@ -35,7 +35,7 @@ public class AdminCardService {
     private final CardMapper mapper;
 
     @Transactional
-    public CardDto createCard(AdminCreateCardRequest request) {
+    public AdminCardDto createCard(AdminCreateCardRequest request) {
 
         User user = userRepository.findByUniqueKey(request.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -56,7 +56,7 @@ public class AdminCardService {
                 "ownerUser=" + card.getOwner().getUniqueKey()
         );
 
-        return mapper.toDto(saved);
+        return mapper.toAdminDto(saved);
     }
 
     @Transactional
@@ -93,13 +93,13 @@ public class AdminCardService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<CardDto> getUserCards(UUID userId, Pageable pageable) {
+    public PageResponse<AdminCardDto> getUserCards(UUID userId, Pageable pageable) {
 
         User user = userRepository.findByUniqueKey(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Page<Card> cards = cardRepository.findAllByOwner(user, pageable);
 
-        return PageMapper.toPageResponse(cards.map(mapper::toDto));
+        return PageMapper.toPageResponse(cards.map(mapper::toAdminDto));
     }
 }

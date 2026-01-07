@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="grant-full-access-admins" author="Eugene">
+        <sql>
+        -- Таблицы
+        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO app_admin, db_admin;
+
+        -- Sequence
+        GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO app_admin, db_admin;
+
+        -- чтобы новые таблицы не ломались
+        ALTER DEFAULT PRIVILEGES IN SCHEMA public
+            GRANT ALL ON TABLES TO app_admin, db_admin;
+
+        ALTER DEFAULT PRIVILEGES IN SCHEMA public
+            GRANT ALL ON SEQUENCES TO app_admin, db_admin;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

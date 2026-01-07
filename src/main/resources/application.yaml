@@ -3,16 +3,13 @@ spring:
     name: cards
   datasource:
     url: jdbc:postgresql://localhost:5432/mydatabase
-    username: admin
+    username: app_admin
     password: secret
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: true
-    #properties:
-      #hibernate:
-        #format_sql: true
   liquibase:
     change-log: classpath:db.migration/root-changelog.xml
 
@@ -21,6 +18,7 @@ application:
     jwt:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970 # 256-bit hex ключ
       expiration: 86400000 # 1 день в миллисекундах
+      service-name: "external-partner-service"
   masking:
     enabled: true
     maskSymbol: '*'

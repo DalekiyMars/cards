@@ -5,11 +5,16 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="create-cards-view" author="Eugene">
-        <createView viewName="cards_view" replaceIfExists="true">
-            SELECT id, '****' || RIGHT(card_number, 4) AS card_number, validity_period, status, unique_key
-            FROM cards
+    <changeSet id="create-users-view" author="Eugene">
+        <createView viewName="users_view" replaceIfExists="true">
+            SELECT
+                unique_key,
+                username,
+                role
+            FROM users
         </createView>
     </changeSet>
+
+
 
 </databaseChangeLog>
