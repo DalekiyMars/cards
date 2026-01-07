@@ -1,10 +1,11 @@
-package com.banking.cards.controller.admin;
+package com.banking.cards.controller.api;
 
 import com.banking.cards.common.CardStatus;
 import com.banking.cards.dto.request.AdminCreateCardRequest;
-import com.banking.cards.dto.response.AdminCardDto;
+import com.banking.cards.dto.response.CardDto;
 import com.banking.cards.dto.response.PageResponse;
 import com.banking.cards.service.admin.AdminCardService;
+import com.banking.cards.service.api.ApiCardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,7 +13,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,18 +32,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin/cards")
+@RequestMapping("/api/side-service/")
 @RequiredArgsConstructor
-@Tag(
-        name = "Admin Cards",
-        description = "Административное управление банковскими картами"
-)
+@Tag(name = "API")
 @SecurityRequirement(name = "bearerAuth")
-@PreAuthorize("hasRole('ADMIN')")
-@Slf4j
-public class AdminCardController {
+@PreAuthorize("hasRole('INTEGRATION')")
+public class SideServiceController {
 
-    private final AdminCardService cardAdminService;
+    private final ApiCardService apiCardService;
+    private final AdminCardService adminCardService;
 
     // ===== CREATE CARD =====
 
@@ -64,13 +61,47 @@ public class AdminCardController {
             @ApiResponse(responseCode = "409", description = "Карта с таким номером уже существует")
     })
     @PostMapping
-    public AdminCardDto createCard(
+    public CardDto createCard(
             @Valid @RequestBody AdminCreateCardRequest request
     ) {
-        return cardAdminService.createCard(request);
+        return apiCardService.createCard(request);
     }
 
-    // ===== CHANGE CARD STATUS =====
+    @Operation(
+            summary = "Получить все карты",
+            description = "Возвращает список всех карт в системе с пагинацией"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Список карт")
+    })
+    @GetMapping("{uuid}")
+    public PageResponse<CardDto> getAllUserCards(
+            @PathVariable UUID uuid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                Math.min(size, 50),
+                Sort.by("id").ascending()
+        );
+        return apiCardService.getUserCards(uuid, pageable);
+    }
+
+
+    @Operation(
+            summary = "Удалить карту",
+            description = "Удаляет карту из системы"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Карта удалена"),
+            @ApiResponse(responseCode = "404", description = "Карта не найдена")
+    })
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCard(@PathVariable UUID id) {
+        adminCardService.deleteCard(id);
+    }
 
     @Operation(
             summary = "Изменить статус карты",
@@ -85,45 +116,6 @@ public class AdminCardController {
             @PathVariable UUID id,
             @RequestParam CardStatus status
     ) {
-        cardAdminService.changeStatus(id, status);
-    }
-
-    // ===== DELETE CARD =====
-
-    @Operation(
-            summary = "Удалить карту",
-            description = "Удаляет карту из системы"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Карта удалена"),
-            @ApiResponse(responseCode = "404", description = "Карта не найдена")
-    })
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCard(@PathVariable UUID id) {
-        cardAdminService.deleteCard(id);
-    }
-
-    // ===== GET ALL CARDS =====
-
-    @Operation(
-            summary = "Получить все карты",
-            description = "Возвращает список всех карт в системе с пагинацией"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Список карт")
-    })
-    @GetMapping("{uuid}")
-    public PageResponse<AdminCardDto> getAllUserCards(
-            @PathVariable UUID uuid,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
-    ) {
-        Pageable pageable = PageRequest.of(
-                page,
-                Math.min(size, 50),
-                Sort.by("id").ascending()
-        );
-        return cardAdminService.getUserCards(uuid, pageable);
+        adminCardService.changeStatus(id, status);
     }
 }

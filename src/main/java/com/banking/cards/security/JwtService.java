@@ -1,7 +1,9 @@
 package com.banking.cards.security;
 
+import com.banking.cards.dto.request.SideServiceRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,20 +15,24 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class JwtService {
 
     private final SecretKey secretKey;
     private final long expirationMs;
+    @Getter
+    private final String sideServiceName;
 
     public JwtService(
             @Value("${application.security.jwt.secret-key}") String secret,
-            @Value("${application.security.jwt.expiration}") long expirationMs
+            @Value("${application.security.jwt.expiration}") long expirationMs,
+            @Value("${application.security.jwt.service-name}") String sideServiceName
+
     ) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;
+        this.sideServiceName = sideServiceName;
     }
 
     /**
@@ -51,6 +57,22 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateIntegrationToken(SideServiceRequest request) {
+        if (!request.service().equalsIgnoreCase(sideServiceName)) {
+            throw new IllegalArgumentException("Invalid service name");
+        }
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + expirationMs);
+
+        return Jwts.builder()
+                .setSubject(sideServiceName)
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .claim("roles", List.of("ROLE_INTEGRATION")) // Специальная роль
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -68,8 +90,8 @@ public class JwtService {
         }
     }
 
-    public UUID extractUserId(String token) {
-        return UUID.fromString(getClaims(token).getSubject());
+    public String extractUserId(String token) {
+        return getClaims(token).getSubject();
     }
 
     @SuppressWarnings("unchecked")

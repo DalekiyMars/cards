@@ -28,10 +28,9 @@ public class AuditService {
             UUID entityId,
             String details
     ) {
-        UUID actor = currentUserId();
 
         AuditLog log = AuditLog.builder()
-                .actorUserId(actor)
+                .actorUserId(currentUserId())
                 .actorRole(currentRole())
                 .action(action)
                 .entityType(entityType)
@@ -43,7 +42,7 @@ public class AuditService {
         auditLogRepository.save(log);
     }
 
-    public UUID currentUserId() {
+    public String currentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated()) {
@@ -53,7 +52,9 @@ public class AuditService {
         Object principal = auth.getPrincipal();
 
         if (principal instanceof UUID uuid) {
-            return uuid;
+            return uuid.toString();
+        } else if (principal instanceof String string) {
+            return string;
         }
 
         throw new IllegalStateException(

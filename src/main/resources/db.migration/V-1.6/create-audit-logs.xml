@@ -10,10 +10,10 @@
             <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="actor_user_id" type="UUID">
+            <column name="actor_user_id" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="actor_role" type="VARCHAR(10)">
+            <column name="actor_role" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
             <column name="action" type="VARCHAR(50)">

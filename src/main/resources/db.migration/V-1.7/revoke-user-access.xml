@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="revoke-user-access" author="Eugene">
+        <sql>
+            REVOKE ALL ON ALL TABLES IN SCHEMA public FROM app_user;
+            REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM app_user;
+        </sql>
+    </changeSet>
+    <changeSet id="grant-view-access-users" author="Eugene">
+        <sql>
+            GRANT SELECT ON users_view TO app_user;
+            GRANT SELECT ON cards_view TO app_user;
+            GRANT SELECT ON card_operations_view TO app_user;
+        </sql>
+    </changeSet>
+    <changeSet id="change-view-owner" author="Eugene">
+        <sql>
+            ALTER VIEW users_view OWNER TO app_admin;
+            ALTER VIEW cards_view OWNER TO app_admin;
+            ALTER VIEW card_operations_view OWNER TO app_admin;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

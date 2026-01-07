@@ -7,6 +7,7 @@ import com.banking.cards.service.user.UserCardInfoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/cards")
+@RequestMapping("/api/cards/info")
 @RequiredArgsConstructor
 @Tag(name = "Cards")
 @SecurityRequirement(name = "bearerAuth")
+@PreAuthorize("hasRole('USER')")
 public class CardInfoController {
 
     private final UserCardInfoService cardService;

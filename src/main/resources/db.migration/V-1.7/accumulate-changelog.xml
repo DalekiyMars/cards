@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <include file="create-users-view.xml" relativeToChangelogFile="true"/>
+    <include file="create-card-operations-view.xml" relativeToChangelogFile="true"/>
+    <include file="create-db-roles.xml" relativeToChangelogFile="true"/>
+    <include file="grant-full-access-admins.xml" relativeToChangelogFile="true"/>
+    <include file="revoke-user-access.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

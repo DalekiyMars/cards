@@ -11,4 +11,5 @@
     <include file="V-1.4/accumulate-changelog.xml" relativeToChangelogFile="true"/>
     <include file="V-1.5/accumulate-changelog.xml" relativeToChangelogFile="true"/>
     <include file="V-1.6/accumulate-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="V-1.7/accumulate-changelog.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
