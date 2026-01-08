@@ -1,12 +1,26 @@
 package com.banking.cards.entity;
 
 import com.banking.cards.common.CardStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name = "cards")
@@ -18,12 +32,6 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "unique_key",
-            nullable = false,
-            unique = true,
-            updatable = false)
-    private UUID uniqueKey;
 
     @Column(name = "card_number", nullable = false, unique = true)
     private String cardNumber;
@@ -44,11 +52,4 @@ public class Card {
 
     @Version
     private Long version;
-
-    @PrePersist
-    void prePersist() {
-        if (Objects.isNull(uniqueKey)) {
-            uniqueKey = UUID.randomUUID();
-        }
-    }
 }

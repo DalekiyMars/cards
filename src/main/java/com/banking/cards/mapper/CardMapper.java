@@ -21,7 +21,6 @@ public class CardMapper {
 
     public CardDto toDto(Card card) {
         return new CardDto(
-                card.getUniqueKey(),
                 toMaskedCardNumber(card.getCardNumber()),
                 card.getValidityPeriod(),
                 card.getStatus(),
@@ -31,7 +30,6 @@ public class CardMapper {
 
     public AdminCardDto toAdminDto(Card card) {
         return new AdminCardDto(
-                card.getUniqueKey(),
                 toMaskedCardNumber(card.getCardNumber()).toString(),
                 card.getValidityPeriod(),
                 card.getStatus(),

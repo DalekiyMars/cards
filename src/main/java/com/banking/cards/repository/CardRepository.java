@@ -10,13 +10,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
     Page<Card> findAllByOwner(User owner, Pageable pageable);
+    Optional<Card> findByCardNumber(String cardNumber);
 
-    Optional<Card> findByUniqueKeyAndOwner(UUID uniqueKey, User owner);
-    Optional<Card> findByUniqueKey(UUID publicId);
+    Optional<Card> findByCardNumberAndOwner(String cardNumber, User owner);
     List<Card> findAllByStatusNotAndValidityPeriodBefore(
             CardStatus status,
             LocalDate date

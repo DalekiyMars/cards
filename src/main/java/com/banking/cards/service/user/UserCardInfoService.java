@@ -46,10 +46,10 @@ public class UserCardInfoService {
     }
 
     @Transactional(readOnly = true)
-    public CardDto getUserCard(UUID cardId, UUID userId) {
+    public CardDto getUserCard(String cardId, UUID userId) {
         User user = getUser(userId);
 
-        Card card = cardRepository.findByUniqueKeyAndOwner(cardId, user)
+        Card card = cardRepository.findByCardNumberAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
 
         return mapper.toDto(card);
@@ -57,14 +57,14 @@ public class UserCardInfoService {
 
     @Transactional(readOnly = true)
     public PageResponse<CardOperationDto> getCardOperations(
-            UUID cardId,
+            String cardId,
             UUID userId,
             int page,
             int size
     ) {
         User user = getUser(userId);
 
-        Card card = cardRepository.findByUniqueKeyAndOwner(cardId, user)
+        Card card = cardRepository.findByCardNumberAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
 
         Pageable pageable = PageRequest.of(

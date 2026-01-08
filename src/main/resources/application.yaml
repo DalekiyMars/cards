@@ -26,6 +26,8 @@ application:
   admin:
     username: admin
     password: admin123
+  card-settings:
+    prefix: 4000
 
 springdoc:
   api-docs:

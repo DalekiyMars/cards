@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "audit_logs")
@@ -47,7 +46,7 @@ public class AuditLog {
     private AuditEntityType entityType;
 
     @Column(name = "entity_id")
-    private UUID entityId;
+    private String entityId;
 
     @Column(columnDefinition = "TEXT")
     private String details;

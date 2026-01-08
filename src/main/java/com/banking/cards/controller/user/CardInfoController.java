@@ -1,5 +1,6 @@
 package com.banking.cards.controller.user;
 
+import com.banking.cards.dto.request.CardNumberRequest;
 import com.banking.cards.dto.response.CardDto;
 import com.banking.cards.dto.response.CardOperationDto;
 import com.banking.cards.dto.response.PageResponse;
@@ -10,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,22 +39,22 @@ public class CardInfoController {
     }
 
     // ===== GET ONE CARD =====
-    @GetMapping("/{id}")
+    @GetMapping("/one")
     public CardDto getMyCard(
-            @PathVariable UUID id,
+            @RequestBody CardNumberRequest cardNumberRequest,
             @AuthenticationPrincipal UUID userId
     ) {
-        return cardService.getUserCard(id, userId);
+        return cardService.getUserCard(cardNumberRequest.getCardNumber(), userId);
     }
 
     // ===== CARD OPERATIONS =====
-    @GetMapping("/{id}/operations")
+    @GetMapping("/operations")
     public PageResponse<CardOperationDto> getCardOperations(
-            @PathVariable UUID id,
+            @RequestBody CardNumberRequest cardNumberRequest,
             @AuthenticationPrincipal UUID userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return cardService.getCardOperations(id, userId, page, size);
+        return cardService.getCardOperations(cardNumberRequest.getCardNumber(), userId, page, size);
     }
 }

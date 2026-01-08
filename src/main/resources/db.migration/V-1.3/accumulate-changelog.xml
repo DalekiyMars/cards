@@ -5,5 +5,4 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <include file="add-unique-key-to-users.xml" relativeToChangelogFile="true"/>
-    <include file="add-unique-key-to-cards.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
