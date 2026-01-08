@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -150,6 +151,18 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "Arguments exception",
                 "Json error"
+        );
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotSupportedMethodError(
+            HttpRequestMethodNotSupportedException ex,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.METHOD_NOT_ALLOWED,
+                ex.getMessage(),
+                request.getRequestURI()
         );
     }
 

@@ -18,14 +18,13 @@
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-
-            <column name="card_number" type="VARCHAR(255)">
+            <column name="card_number" type="VARCHAR(20)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="card_owner" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="validity_period" type="DATE">
+            <column name="validity_period" type="VARCHAR(7)">
                 <constraints nullable="false"/>
             </column>
             <column name="status" type="VARCHAR(7)">

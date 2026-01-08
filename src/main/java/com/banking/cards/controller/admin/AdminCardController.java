@@ -4,9 +4,14 @@ import com.banking.cards.common.CardStatus;
 import com.banking.cards.dto.request.AdminCreateCardRequest;
 import com.banking.cards.dto.request.CardNumberRequest;
 import com.banking.cards.dto.response.AdminCardDto;
+import com.banking.cards.dto.response.ApiErrorResponse;
 import com.banking.cards.dto.response.PageResponse;
 import com.banking.cards.service.admin.AdminCardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,7 +42,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(
         name = "Admin Cards",
-        description = "Административное управление банковскими картами"
+        description = "Управление банковскими картами пользователей администратором"
 )
 @SecurityRequirement(name = "bearerAuth")
 @PreAuthorize("hasRole('ADMIN')")
@@ -49,24 +54,76 @@ public class AdminCardController {
     // ===== CREATE CARD =====
 
     @Operation(
-            summary = "Создать карту пользователю",
+            summary = "Создать банковскую карту пользователю",
             description = """
                     Создаёт новую банковскую карту для пользователя.
                     
                     Правила:
-                    - карта создаётся со статусом ACTIVE
-                    - баланс = 0
-                    - номер карты уникален
+                    - статус карты: ACTIVE
+                    - номер карты генерируется автоматически
+                    - баланс задаётся при создании
                     """
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Карта успешно создана"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
-            @ApiResponse(responseCode = "409", description = "Карта с таким номером уже существует")
+
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Карта успешно создана",
+                    content = @Content(
+                            schema = @Schema(implementation = AdminCardDto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "cardNumber": "4276550012345678",
+                                      "status": "ACTIVE",
+                                      "balance": 0.00,
+                                      "validityPeriod": "2029-12",
+                                      "ownerId": "550e8400-e29b-41d4-a716-446655440000"
+                                    }
+                                    """)
+                    )
+            ),
+
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Пользователь не найден",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiErrorResponse.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "status": 404,
+                                      "error": "Not Found",
+                                      "message": "User not found",
+                                      "path": "/api/admin/cards"
+                                    }
+                                    """)
+                    )
+            ),
+
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Конфликт при создании карты",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiErrorResponse.class)
+                    )
+            )
     })
     @PostMapping
     public AdminCardDto createCard(
-            @Valid @RequestBody AdminCreateCardRequest request
+            @Valid
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Данные для создания карты",
+                    required = true,
+                    content = @Content(
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "userId": "550e8400-e29b-41d4-a716-446655440000",
+                                      "validityPeriod": "2029-12",
+                                      "initialBalance": 0.00
+                                    }
+                                    """)
+                    )
+            )
+            @RequestBody AdminCreateCardRequest request
     ) {
         return cardAdminService.createCard(request);
     }
@@ -75,16 +132,51 @@ public class AdminCardController {
 
     @Operation(
             summary = "Изменить статус карты",
-            description = "Блокирует, активирует или помечает карту как устаревшую"
+            description = """
+                    Изменяет статус карты.
+                    
+                    Возможные значения:
+                    - ACTIVE
+                    - BLOCKED
+                    - EXPIRED
+                    """
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Статус карты изменён"),
-            @ApiResponse(responseCode = "404", description = "Карта не найдена")
+
+            @ApiResponse(
+                    responseCode = "202",
+                    description = "Статус карты успешно изменён"
+            ),
+
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Карта не найдена",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiErrorResponse.class)
+                    )
+            )
     })
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PatchMapping("/status")
     public void changeCardStatus(
-            @RequestBody @Valid CardNumberRequest cardNumberRequest,
+            @Valid
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Номер карты",
+                    required = true,
+                    content = @Content(
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "cardNumber": "4276550012345678"
+                                    }
+                                    """)
+                    )
+            )
+            @RequestBody CardNumberRequest cardNumberRequest,
+
+            @Parameter(
+                    description = "Новый статус карты",
+                    example = "BLOCKED"
+            )
             @RequestParam CardStatus status
     ) {
         cardAdminService.changeStatus(cardNumberRequest.getCardNumber(), status);
@@ -93,32 +185,93 @@ public class AdminCardController {
     // ===== DELETE CARD =====
 
     @Operation(
-            summary = "Удалить карту",
-            description = "Удаляет карту из системы"
+            summary = "Удалить банковскую карту",
+            description = """
+                    Удаляет карту из системы.
+                    
+                    Условие:
+                    - баланс карты должен быть равен 0
+                    """
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Карта удалена"),
-            @ApiResponse(responseCode = "404", description = "Карта не найдена")
+
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Карта успешно удалена"
+            ),
+
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Баланс карты не равен 0",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiErrorResponse.class)
+                    )
+            ),
+
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Карта не найдена",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiErrorResponse.class)
+                    )
+            )
     })
-    @DeleteMapping()
+    @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteCard(@RequestBody @Valid CardNumberRequest cardNumberRequest) {
+    public void deleteCard(
+            @Valid
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Номер карты для удаления",
+                    required = true,
+                    content = @Content(
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "cardNumber": "4276550012345678"
+                                    }
+                                    """)
+                    )
+            )
+            @RequestBody CardNumberRequest cardNumberRequest
+    ) {
         cardAdminService.deleteCard(cardNumberRequest.getCardNumber());
     }
 
     // ===== GET ALL CARDS =====
 
     @Operation(
-            summary = "Получить все карты",
-            description = "Возвращает список всех карт в системе с пагинацией"
+            summary = "Получить карты пользователя",
+            description = "Возвращает список всех карт пользователя с пагинацией"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Список карт")
+
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Список карт пользователя",
+                    content = @Content(
+                            schema = @Schema(implementation = PageResponse.class)
+                    )
+            ),
+
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Пользователь не найден",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiErrorResponse.class)
+                    )
+            )
     })
     @GetMapping("{uuid}")
     public PageResponse<AdminCardDto> getAllUserCards(
+            @Parameter(
+                    description = "UUID пользователя",
+                    example = "550e8400-e29b-41d4-a716-446655440000"
+            )
             @PathVariable UUID uuid,
+
+            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "Размер страницы (макс. 50)", example = "20")
             @RequestParam(defaultValue = "20") int size
     ) {
         Pageable pageable = PageRequest.of(
