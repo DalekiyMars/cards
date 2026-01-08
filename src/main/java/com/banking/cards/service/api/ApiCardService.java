@@ -50,7 +50,7 @@ public class ApiCardService {
                 AuditEntityType.CARD,
                 saved.getCardNumber(),
                 "ownerUser=" + saved.getOwner().getUniqueKey()+
-                        "generated card by side service"
+                        " generated card by side service"
         );
 
         return mapper.toDto(saved);
