@@ -1,6 +1,7 @@
 package com.banking.cards.controller.user;
 
 import com.banking.cards.dto.request.CardAmountRequest;
+import com.banking.cards.dto.request.CardNumberRequest;
 import com.banking.cards.dto.request.CardTransferRequest;
 import com.banking.cards.service.user.UserCardOperationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -8,9 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -24,22 +26,22 @@ public class CardOperationsController {
 
     private final UserCardOperationService userCardOperationService;
 
-    @PostMapping("/{id}/deposit")
+    @PostMapping("/deposit")
     public void deposit(
-            @PathVariable UUID id,
+            @RequestBody CardNumberRequest cardNumberRequest,
             @Valid @RequestBody CardAmountRequest request,
             @AuthenticationPrincipal Long userId
     ) {
-        userCardOperationService.deposit(id, request.amount(), userId);
+        userCardOperationService.deposit(cardNumberRequest.getCardNumber(), request.amount(), userId);
     }
 
-    @PostMapping("/{id}/withdraw")
+    @PostMapping("/withdraw")
     public void withdraw(
-            @PathVariable UUID id,
+            @RequestBody CardNumberRequest cardNumberRequest,
             @Valid @RequestBody CardAmountRequest request,
             @AuthenticationPrincipal Long userId
     ) {
-        userCardOperationService.withdraw(id, request.amount(), userId);
+        userCardOperationService.withdraw(cardNumberRequest.getCardNumber(), request.amount(), userId);
     }
 
     @PostMapping("/transfer")

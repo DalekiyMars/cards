@@ -11,8 +11,8 @@
                 co.type,
                 co.amount,
                 co.created_at,
-                c_from.unique_key AS from_card,
-                c_to.unique_key   AS to_card
+                c_from.card_number AS from_card,
+                c_to.card_number   AS to_card
             FROM card_operations co
                      LEFT JOIN cards c_from ON co.from_card_id = c_from.id
                      LEFT JOIN cards c_to   ON co.to_card_id   = c_to.id

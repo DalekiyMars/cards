@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class UserCardOperationService {
     private final AuditService auditService;
 
     @Transactional
-    public void transfer(UUID fromId, UUID toId, BigDecimal amount, Long userId) {
+    public void transfer(String fromId, String toId, BigDecimal amount, Long userId) {
         User user = getUser(userId);
 
         Card from = getUserCard(fromId, user);
@@ -48,22 +47,22 @@ public class UserCardOperationService {
         auditService.log(
                 AuditAction.CARD_TRANSFER_OUT,
                 AuditEntityType.CARD,
-                from.getUniqueKey(),
-                "to=" + to.getUniqueKey() + ";amount=" + amount
+                from.getCardNumber(),
+                "to=" + to.getCardNumber() + ";amount=" + amount
         );
 
         auditService.log(
                 AuditAction.CARD_TRANSFER_IN,
                 AuditEntityType.CARD,
-                to.getUniqueKey(),
-                "from=" + from.getUniqueKey() + ";amount=" + amount
+                to.getCardNumber(),
+                "from=" + from.getCardNumber() + ";amount=" + amount
         );
 
 
     }
 
     @Transactional
-    public void deposit(UUID cardId, BigDecimal amount, Long userId) {
+    public void deposit(String cardId, BigDecimal amount, Long userId) {
         User user = getUser(userId);
 
         Card card = getUserCard(cardId, user);
@@ -75,13 +74,13 @@ public class UserCardOperationService {
         auditService.log(
                 AuditAction.CARD_DEPOSIT,
                 AuditEntityType.CARD,
-                card.getUniqueKey(),
+                card.getCardNumber(),
                 "amount=" + amount
         );
     }
 
     @Transactional
-    public void withdraw(UUID cardId, BigDecimal amount, Long userId) {
+    public void withdraw(String cardId, BigDecimal amount, Long userId) {
         User user = getUser(userId);
 
         Card card = getUserCard(cardId, user);
@@ -98,7 +97,7 @@ public class UserCardOperationService {
         auditService.log(
                 AuditAction.CARD_WITHDRAW,
                 AuditEntityType.CARD,
-                card.getUniqueKey(),
+                card.getCardNumber(),
                 "amount=" + amount + ";balanceBefore=" + before
         );
 
@@ -111,8 +110,8 @@ public class UserCardOperationService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    private Card getUserCard(UUID cardId, User user) {
-        return cardRepository.findByUniqueKeyAndOwner(cardId, user)
+    private Card getUserCard(String cardId, User user) {
+        return cardRepository.findByCardNumberAndOwner(cardId, user)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found"));
     }
 

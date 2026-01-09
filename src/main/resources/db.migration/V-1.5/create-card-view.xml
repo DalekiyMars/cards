@@ -7,7 +7,7 @@
 
     <changeSet id="create-cards-view" author="Eugene">
         <createView viewName="cards_view" replaceIfExists="true">
-            SELECT id, '****' || RIGHT(card_number, 4) AS card_number, validity_period, status, unique_key
+            SELECT id, '****' || RIGHT(card_number, 4) AS card_number, validity_period, status
             FROM cards
         </createView>
     </changeSet>

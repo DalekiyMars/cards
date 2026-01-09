@@ -18,7 +18,9 @@ application:
     jwt:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970 # 256-bit hex ключ
       expiration: 86400000 # 1 день в миллисекундах
-      service-name: "external-partner-service"
+    integration:
+      service-name: external-partner-service
+      api-key: c80a26911cb7e3c3fb86a9bc2ec118c6e882192c1a215690889f4242f3c09ec5
   masking:
     enabled: true
     maskSymbol: '*'
@@ -26,6 +28,8 @@ application:
   admin:
     username: admin
     password: admin123
+  card-settings:
+    prefix: 4000
 
 springdoc:
   api-docs:

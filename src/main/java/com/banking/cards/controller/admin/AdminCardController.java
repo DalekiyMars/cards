@@ -2,6 +2,7 @@ package com.banking.cards.controller.admin;
 
 import com.banking.cards.common.CardStatus;
 import com.banking.cards.dto.request.AdminCreateCardRequest;
+import com.banking.cards.dto.request.CardNumberRequest;
 import com.banking.cards.dto.response.AdminCardDto;
 import com.banking.cards.dto.response.PageResponse;
 import com.banking.cards.service.admin.AdminCardService;
@@ -80,12 +81,13 @@ public class AdminCardController {
             @ApiResponse(responseCode = "200", description = "Статус карты изменён"),
             @ApiResponse(responseCode = "404", description = "Карта не найдена")
     })
-    @PatchMapping("/{id}/status")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PatchMapping("/status")
     public void changeCardStatus(
-            @PathVariable UUID id,
+            @RequestBody @Valid CardNumberRequest cardNumberRequest,
             @RequestParam CardStatus status
     ) {
-        cardAdminService.changeStatus(id, status);
+        cardAdminService.changeStatus(cardNumberRequest.getCardNumber(), status);
     }
 
     // ===== DELETE CARD =====
@@ -98,10 +100,10 @@ public class AdminCardController {
             @ApiResponse(responseCode = "204", description = "Карта удалена"),
             @ApiResponse(responseCode = "404", description = "Карта не найдена")
     })
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCard(@PathVariable UUID id) {
-        cardAdminService.deleteCard(id);
+    @DeleteMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteCard(@RequestBody @Valid CardNumberRequest cardNumberRequest) {
+        cardAdminService.deleteCard(cardNumberRequest.getCardNumber());
     }
 
     // ===== GET ALL CARDS =====

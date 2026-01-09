@@ -32,7 +32,7 @@ public class AdminUserService {
         auditService.log(
                 AuditAction.USER_ROLE_CHANGED,
                 AuditEntityType.USER,
-                userId,
+                userId.toString(),
                 "got new role =" + newRole
         );
 
