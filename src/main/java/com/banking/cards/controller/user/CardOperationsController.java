@@ -14,11 +14,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
         description = "Операции с банковскими картами"
 )
 @SecurityRequirement(name = "bearerAuth")
+@PreAuthorize("hasRole('USER')")
 public class CardOperationsController {
 
     private final UserCardOperationService userCardOperationService;
@@ -97,9 +101,9 @@ public class CardOperationsController {
                     )
             )
             @RequestBody CardNumberAndAmountRequest request,
-            @AuthenticationPrincipal Long userId
+            @AuthenticationPrincipal String userId
     ) {
-        userCardOperationService.deposit(request.cardNumber(), request.amount(), userId);
+        userCardOperationService.deposit(request.cardNumber(), request.amount(), UUID.fromString(userId));
     }
 
     @Operation(
@@ -167,9 +171,9 @@ public class CardOperationsController {
                     )
             )
             @RequestBody CardNumberAndAmountRequest request,
-            @AuthenticationPrincipal Long userId
+            @AuthenticationPrincipal String userId
     ) {
-        userCardOperationService.withdraw(request.cardNumber(), request.amount(), userId);
+        userCardOperationService.withdraw(request.cardNumber(), request.amount(), UUID.fromString(userId));
     }
 
     @Operation(
@@ -230,13 +234,13 @@ public class CardOperationsController {
                     )
             )
             @RequestBody CardTransferRequest request,
-            @AuthenticationPrincipal Long userId
+            @AuthenticationPrincipal String userId
     ) {
         userCardOperationService.transfer(
                 request.fromCardId(),
                 request.toCardId(),
                 request.amount(),
-                userId
+                UUID.fromString(userId)
         );
     }
 }

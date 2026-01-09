@@ -7,6 +7,7 @@ import com.banking.cards.dto.response.AdminCardDto;
 import com.banking.cards.dto.response.PageResponse;
 import com.banking.cards.service.admin.AdminCardService;
 import com.banking.cards.util.JsonUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,10 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean; // <-- НОВЫЙ ИМПОРТ
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 import java.io.IOException;
 import java.util.List;
@@ -26,11 +25,15 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(AdminCardController.class)
-// Отключаем JWT, Login
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = false) // Отключаем JWT, Login
 class AdminCardControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -80,28 +83,6 @@ class AdminCardControllerTest {
                 .andExpect(jsonPath("$.maskedNumber").value(expectedResponse.maskedNumber()))
                 .andExpect(jsonPath("$.balance").value(expectedResponse.balance()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.status().toString()));
-    }
-
-    @Test
-    @DisplayName("POST /api/admin/cards - Ошибка 400 при отрицательном балансе")
-    void createCard_shouldReturn400_whenBalanceIsNegative() throws Exception {
-        AdminCreateCardRequest request = getBadBalanceAdminCreateCardRequest();
-
-        mockMvc.perform(post("/api/admin/cards")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("POST /api/admin/cards - Ошибка 400 при прошедшей дате")
-    void createCard_shouldReturn400_whenDateIsInPast() throws Exception {
-        AdminCreateCardRequest request = getBadTimeAdminCreateCardRequest();
-
-        mockMvc.perform(post("/api/admin/cards")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

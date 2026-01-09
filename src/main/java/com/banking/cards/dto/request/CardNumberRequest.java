@@ -13,7 +13,7 @@ public class CardNumberRequest {
             description = "Номер банковской карты",
             example = "4276550012345678"
     )
-    @NotBlank
+    @NotBlank(message = "Card number required")
     @Pattern(regexp = Constants.CARD_PATTERN, message = "Wrong card number")
     String cardNumber;
 

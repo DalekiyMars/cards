@@ -15,7 +15,7 @@ public record ChangeUserRoleRequest(
                 description = "UUID пользователя",
                 example = "550e8400-e29b-41d4-a716-446655440000"
         )
-        @NotNull
+        @NotNull(message = "must be not null")
         UUID id,
 
         @Schema(
@@ -23,6 +23,6 @@ public record ChangeUserRoleRequest(
                 allowableValues = {"USER", "ADMIN"},
                 example = "ADMIN"
         )
-        @NotNull
+        @NotNull(message = "must be not null")
         Role role
 ) {}

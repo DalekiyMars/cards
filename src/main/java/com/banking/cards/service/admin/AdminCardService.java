@@ -38,10 +38,11 @@ public class AdminCardService {
     private final AuditService auditService;
     private final CardMapper mapper;
     private final CardSettingsConfig cardConfig;
+    private final CardNumberGenerator cardNumberGenerator;
 
     @Transactional
     public AdminCardDto createCard(AdminCreateCardRequest request) {
-        Card saved = cardRepository.save(saveCard(request));
+        Card saved = cardRepository.save(getCard(request));
 
         auditService.log(
                 AuditAction.CARD_CREATED,
@@ -102,12 +103,12 @@ public class AdminCardService {
         return PageMapper.toPageResponse(cards.map(mapper::toAdminDto));
     }
 
-    public Card saveCard(AdminCreateCardRequest request) {
+    public Card getCard(AdminCreateCardRequest request) {
         User user = userRepository.findByUniqueKey(request.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return Card.builder()
-                .cardNumber(CardNumberGenerator.generateCardNumber(cardConfig.getPrefix()))
+                .cardNumber(cardNumberGenerator.generateCardNumber(cardConfig.getPrefix()))
                 .owner(user)
                 .validityPeriod(request.validityPeriod())
                 .status(CardStatus.ACTIVE)

@@ -24,7 +24,7 @@ public class CardMapper {
                 toMaskedCardNumber(card.getCardNumber()),
                 card.getValidityPeriod(),
                 card.getStatus(),
-                toMaskedCardBalance(MathUtil.roundBalanceTo2SympolsAfterPoint(card.getBalance()))
+                toMaskedCardBalance(MathUtil.roundBalanceTo2SymbolsAfterPoint(card.getBalance()))
         );
     }
 

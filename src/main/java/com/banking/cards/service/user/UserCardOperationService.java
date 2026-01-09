@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class UserCardOperationService {
     private final AuditService auditService;
 
     @Transactional
-    public void transfer(String fromId, String toId, BigDecimal amount, Long userId) {
+    public void transfer(String fromId, String toId, BigDecimal amount, UUID userId) {
         User user = getUser(userId);
 
         Card from = getUserCard(fromId, user);
@@ -62,7 +63,7 @@ public class UserCardOperationService {
     }
 
     @Transactional
-    public void deposit(String cardId, BigDecimal amount, Long userId) {
+    public void deposit(String cardId, BigDecimal amount, UUID userId) {
         User user = getUser(userId);
 
         Card card = getUserCard(cardId, user);
@@ -80,7 +81,7 @@ public class UserCardOperationService {
     }
 
     @Transactional
-    public void withdraw(String cardId, BigDecimal amount, Long userId) {
+    public void withdraw(String cardId, BigDecimal amount, UUID userId) {
         User user = getUser(userId);
 
         Card card = getUserCard(cardId, user);
@@ -105,8 +106,8 @@ public class UserCardOperationService {
 
     // ===== HELPERS =====
 
-    private User getUser(Long userId) {
-        return userRepository.findById(userId)
+    private User getUser(UUID userId) {
+        return userRepository.findByUniqueKey(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
