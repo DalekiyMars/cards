@@ -38,9 +38,6 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
-    config-url: /api-docs/swagger-config
-    url: /api-docs
-    operations-sorter: method
-    tags-sorter: alpha
-    display-request-duration: true
-    try-it-out-enabled: true
+  override-with-generic-response: false
+  use-fqn: true
+  show-actuator: false
