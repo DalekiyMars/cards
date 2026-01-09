@@ -4,11 +4,11 @@ import com.banking.cards.common.CardStatus;
 import com.banking.cards.common.MaskedBalanceValue;
 import com.banking.cards.common.MaskedCardNumber;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 public record CardDto (
         MaskedCardNumber maskedNumber,
-        LocalDate validityPeriod,
+        YearMonth validityPeriod,
         CardStatus status,
         MaskedBalanceValue balance)
 {}

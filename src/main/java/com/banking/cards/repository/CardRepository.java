@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +18,6 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     Optional<Card> findByCardNumberAndOwner(String cardNumber, User owner);
     List<Card> findAllByStatusNotAndValidityPeriodBefore(
             CardStatus status,
-            LocalDate date
+            YearMonth date
     );
 }

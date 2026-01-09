@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Entity
 @Table(name = "cards")
@@ -40,8 +40,8 @@ public class Card {
     @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
-    @Column(name = "validity_period", nullable = false)
-    private LocalDate validityPeriod;
+    @Column(name = "validity_period", nullable = false, length = 7)
+    private YearMonth validityPeriod;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
