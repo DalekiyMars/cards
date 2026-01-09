@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -44,7 +45,11 @@ public class ApiCardService {
 
     @Transactional
     public CardDto createCard(AdminCreateCardRequest request) {
-        Card saved = cardRepository.save(adminCardService.saveCard(request));
+        Card card = adminCardService.getCard(request);
+        if (Objects.isNull(card)) {
+            throw new IllegalArgumentException("Failed to create card");
+        }
+        Card saved = cardRepository.save(card);
         auditService.log(
                 AuditAction.CARD_CREATED,
                 AuditEntityType.CARD,

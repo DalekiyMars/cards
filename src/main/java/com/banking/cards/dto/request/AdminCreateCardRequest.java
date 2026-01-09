@@ -13,7 +13,7 @@ import java.util.UUID;
 @Schema(description = "Запрос на создание банковской карты")
 public record AdminCreateCardRequest(
 
-        @NotNull
+        @NotNull(message = "must be not null")
         UUID userId,
 
         @Schema(
@@ -21,7 +21,7 @@ public record AdminCreateCardRequest(
                 example = "2029-12"
         )
         @NotNull
-        @Future
+        @Future(message = "must be a future date")
         YearMonth validityPeriod,
 
         @Schema(
@@ -30,6 +30,6 @@ public record AdminCreateCardRequest(
         )
         @NotNull
         @DecimalMin(value = "0", message = "Amount must be greater than zero")
-        @Digits(integer = 19, fraction = 2)
+        @Digits(integer = 19, fraction = 2, message = "numeric value out of bounds")
         BigDecimal initialBalance
 ) {}

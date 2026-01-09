@@ -11,11 +11,11 @@ public record SideServiceRequest(
                 description = "Имя стороннего сервиса",
                 example = "billing-service"
         )
-        @NotBlank String service,
+        @NotBlank(message = "must not be blank") String service,
 
         @Schema(
                 description = "API ключ сервиса",
                 example = "b1f8c9d2-4a7e-4f12-a89d-123456789abc"
         )
-        @NotBlank String apiKey
+        @NotBlank(message = "must not be blank") String apiKey
 ) {}

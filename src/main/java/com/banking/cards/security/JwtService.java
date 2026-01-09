@@ -96,7 +96,6 @@ public class JwtService {
             return Optional.of(claims);
         } catch (JwtException | IllegalArgumentException e) {
             log.warn("Invalid JWT: {}",e.getMessage());
-            // Можно залогировать ошибку, если нужно: log.warn("Invalid JWT: {}", e.getMessage());
             return Optional.empty();
         }
     }

@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 
 @UtilityClass
 public class MathUtil {
-    public BigDecimal roundBalanceTo2SympolsAfterPoint(BigDecimal balance){
+    public BigDecimal roundBalanceTo2SymbolsAfterPoint(BigDecimal balance){
         return balance.setScale(2, RoundingMode.HALF_UP);
     }
 }
