@@ -32,11 +32,17 @@ Backend-сервис для управления банковскими карт
 ## Структура проекта
 
 compose.yaml # Docker Compose конфигурация
+
 Dockerfile # Сборка Spring Boot приложения
+
 build.gradle # Gradle конфигурация
+
 src/main/resources/application.yaml   # Файл с конфигурационными настройками проекта
+
 src/main/resources/db.migration      # Liquibase миграции 
+
 src/main/resources/db.migration/root-changelog.xml # Главный liquibase  changelog
+
 
 ---
 
@@ -63,7 +69,7 @@ Spring Boot использует стандартные переменные:
 
 ---
 
-#### Запуск
+## Запуск
 
 Из корневой директории проекта выполнить:
 
@@ -76,18 +82,14 @@ docker compose up --build
 Приложение будет доступно по адресу
 http://localhost:8080
 
----
-
-##### После запуска приложения доступны:
+## После запуска приложения доступны:
 
 - Swagger UI: http://localhost:8080/swagger-ui.html
 - OpenAPI спецификация: http://localhost:8080/api-docs
 
 PostgreSQL будет доступен на порту 5432
 
----
-
-### **Важные архитектурные решения**:
+## **Важные архитектурные решения**:
 - номер карты пользователя и баланс на ней маскируются * (изменяется в application.yaml) в логах и для администратора. Для User и стороннего сервиса номера карт и их баланс выдаются без маски.
 - пароли пользователей кодируются
 - созданы роли в бд (и view для таблиц) ради разраничения доступа. Задаются в create-db-roles.xml.
