@@ -31,23 +31,18 @@ Backend-сервис для управления банковскими карт
 
 ## Структура проекта
 
-├── compose.yaml # Docker Compose конфигурация
-├── Dockerfile # Сборка Spring Boot приложения
-├── build.gradle # Gradle конфигурация
-├── settings.gradle
-├── gradlew
-├── gradlew.bat
+compose.yaml # Docker Compose конфигурация
 
-├── src
-│ ├── main
-│ │ ├── java
-│ │ │ └── com.banking.cards
-│ │ └── resources
-│ │ ├── application.yaml   # Файл с конфигурационными настройками проекта
-│ │ └── db.migration       # Liquibase миграции 
-│ │ └── root-changelog.xml # Главный liquibase  changelog
-│ └── test
-└── README.md
+Dockerfile # Сборка Spring Boot приложения
+
+build.gradle # Gradle конфигурация
+
+src/main/resources/application.yaml   # Файл с конфигурационными настройками проекта
+
+src/main/resources/db.migration      # Liquibase миграции 
+
+src/main/resources/db.migration/root-changelog.xml # Главный liquibase  changelog
+
 
 ---
 
