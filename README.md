@@ -82,6 +82,11 @@ docker compose up --build
 Приложение будет доступно по адресу
 http://localhost:8080
 
+После запуска приложения доступны:
+
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- OpenAPI спецификация: http://localhost:8080/api-docs
+
 PostgreSQL будет доступен на порту 5432
 
 **Важные архитектурные решения**:
