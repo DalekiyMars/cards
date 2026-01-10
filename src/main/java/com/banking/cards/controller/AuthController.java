@@ -4,6 +4,7 @@ import com.banking.cards.dto.request.LoginRequest;
 import com.banking.cards.dto.request.SideServiceRequest;
 import com.banking.cards.dto.response.ApiErrorResponse;
 import com.banking.cards.dto.response.JwtResponse;
+import com.banking.cards.dto.response.RegisterResponse;
 import com.banking.cards.security.JwtService;
 import com.banking.cards.security.SecurityUser;
 import com.banking.cards.service.UserService;
@@ -79,7 +80,7 @@ public class AuthController {
     })
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void register(
+    public RegisterResponse register(
             @Valid
              @io.swagger.v3.oas.annotations.parameters.RequestBody(
                      description = "Данные для регистрации пользователя",
@@ -95,7 +96,7 @@ public class AuthController {
                                         )
             )
              @RequestBody LoginRequest request) {
-        userService.register(request);
+        return new RegisterResponse(userService.register(request));
     }
 
     // ===== LOGIN =====

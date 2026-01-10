@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -15,7 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void register(LoginRequest request) {
+    public UUID register(LoginRequest request) {
 
          if (userRepository.findByUsername(request.username()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
@@ -27,6 +29,6 @@ public class UserService {
                 .role(Role.USER)
                 .build();
 
-        userRepository.save(user);
+        return userRepository.save(user).getUniqueKey();
     }
 }
